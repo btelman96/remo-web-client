@@ -12,12 +12,12 @@ export default class VolumeControl extends Component {
   unmutedVolume = 1;
 
   changeVolume = evt => {
-    this.setVolume(2 - evt.target.value);
+    this.setVolume(evt.target.value);
   };
 
   setVolume = newVolume => {
     this.setState({
-      volume: 2 - newVolume,
+      volume: newVolume,
       icon:
         newVolume === 0
           ? ICONS.VOLUME_OFF
