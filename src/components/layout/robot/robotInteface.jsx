@@ -36,6 +36,7 @@ export default class RobotInterface extends Component {
   };
 
   currentKey = null;
+  keys = []
 
   handleBlur = () => {
     if (this.currentKey) {
@@ -45,15 +46,17 @@ export default class RobotInterface extends Component {
   };
 
   sendCurrentKey = () => {
-    const button = this.keyMap[this.currentKey];
-    if (button && !button.disabled && this.props.chatTabbed === false) {
-      this.handleClick({
-        user: this.props.user,
-        controls_id: this.state.controlsId,
-        socket: socket,
-        button: button,
-      });
-    }
+    this.keys.forEach((k)=> {
+      const button = this.keyMap[k];
+      if (button && !button.disabled && this.props.chatTabbed === false) {
+        this.handleClick({
+          user: this.props.user,
+          controls_id: this.state.controlsId,
+          socket: socket,
+          button: button,
+        });
+      }
+    })
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -201,9 +204,12 @@ export default class RobotInterface extends Component {
     clearInterval(this.sendInterval);
   }
 
+  
+
   handleKeyDown = (e) => {
     if (!this.props.chatTabbed && !this.props.isModalShowing) {
-      if (this.currentKey !== e.key) {
+      if(!this.keys.includes(e.key)){
+        this.keys.push(e.key)
         this.setState({ renderCurrentKey: e.key });
         this.currentKey = e.key;
         this.sendCurrentKey();
@@ -212,7 +218,8 @@ export default class RobotInterface extends Component {
   };
 
   handleKeyUp = (e) => {
-    if (e.key === this.currentKey) {
+    if(this.keys.includes(e.key)){
+      this.keys.splice(this.keys.indexOf(e.key), 1)
       this.currentKey = null;
       this.setState({ renderCurrentKey: null });
     }
